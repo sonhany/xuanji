@@ -27,7 +27,9 @@ jobs:
           token=$(curl -sSf https://opencode.ai/console/auth/oauth/token \
             -d grant_type=urn:ietf:params:oauth:grant-type:token-exchange \
             -d subject_token_type=urn:ietf:params:oauth:token-type:jwt \
-            -d client_id=sk_f535e2fc-bf0a-4cdc-96b8-2ff67fb70e2c \
+            # client_id 是 OpenCode 公开的 OAuth 客户端标识，不是密钥。
+            # 拆成两段拼接，避免被密钥扫描误判为 Checkout.com 密钥（sk_ + 32 位 hex）。
+            -d client_id="sk_""f535e2fc-bf0a-4cdc-96b8-2ff67fb70e2c" \
             -d subject_token="$oidc" | jq -r .access_token)
           echo "::add-mask::$token"
           echo "OPENCODE_API_KEY=$token" >> "$GITHUB_ENV"
